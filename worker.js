@@ -64,7 +64,7 @@ export default {
         try {
           const u = b.replace(/\/manifest\.json$/, "") + "/stream/movie/tt1375666.json";
           const r = await fetch(u, { headers: { "User-Agent": UA } });
-          out.push({ host: new URL(b).host, status: r.status });
+          out.push({ host: new URL(b).host, status: r.status, body: (await r.text()).slice(0, 200) });
         } catch (e) {
           out.push({ error: String(e) });
         }
