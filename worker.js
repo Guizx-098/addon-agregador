@@ -57,6 +57,20 @@ export default {
     if (request.method === "OPTIONS") return new Response(null, { headers: CORS });
     const path = new URL(request.url).pathname;
     if (path === "/manifest.json") return json(MANIFEST);
+    if (path === "/debug") {
+      const list = (env.ADDONS || "").split(/\s+/).filter(Boolean);
+      const out = [];
+      for (const b of list) {
+        try {
+          const u = b.replace(/\/manifest\.json$/, "") + "/stream/movie/tt1375666.json";
+          const r = await fetch(u, { headers: { "User-Agent": UA } });
+          out.push({ host: new URL(b).host, status: r.status });
+        } catch (e) {
+          out.push({ error: String(e) });
+        }
+      }
+      return json({ count: list.length, out });
+    }
 
     const m = path.match(/^\/stream\/([^/]+)\/(.+)\.json$/);
     if (!m) return json({ error: "not found" }, 404);
